@@ -1,4 +1,4 @@
-package com.bacos.mokengeli.biloko.application.domain.service;
+package com.bacos.mokengeli.biloko.config.service;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;

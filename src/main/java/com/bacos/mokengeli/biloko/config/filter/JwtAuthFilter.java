@@ -1,8 +1,8 @@
-package com.bacos.mokengeli.biloko.filter;
+package com.bacos.mokengeli.biloko.config.filter;
 
 
-import com.bacos.mokengeli.biloko.application.domain.service.JwtService;
-import com.bacos.mokengeli.biloko.application.domain.service.UserDetailsServiceImpl;
+import com.bacos.mokengeli.biloko.config.service.JwtService;
+import com.bacos.mokengeli.biloko.config.service.UserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;

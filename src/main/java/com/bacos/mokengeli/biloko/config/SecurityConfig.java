@@ -1,7 +1,7 @@
 package com.bacos.mokengeli.biloko.config;
 
-import com.bacos.mokengeli.biloko.application.domain.service.UserDetailsServiceImpl;
-import com.bacos.mokengeli.biloko.filter.JwtAuthFilter;
+import com.bacos.mokengeli.biloko.config.service.UserDetailsServiceImpl;
+import com.bacos.mokengeli.biloko.config.filter.JwtAuthFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

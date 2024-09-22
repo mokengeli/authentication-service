@@ -2,8 +2,8 @@ package com.bacos.mokengeli.biloko.presentation;
 
 import com.bacos.mokengeli.biloko.application.domain.model.UserInfo;
 import com.bacos.mokengeli.biloko.application.domain.service.AuthenticationService;
-import com.bacos.mokengeli.biloko.application.domain.service.CookieService;
-import com.bacos.mokengeli.biloko.application.domain.service.CustomUserInfoDetails;
+import com.bacos.mokengeli.biloko.config.service.CookieService;
+import com.bacos.mokengeli.biloko.config.service.CustomUserInfoDetails;
 import com.bacos.mokengeli.biloko.presentation.exception.ResponseStatusWrapperException;
 import com.bacos.mokengeli.biloko.presentation.model.AuthResponseDto;
 import com.bacos.mokengeli.biloko.presentation.model.LoginRequest;

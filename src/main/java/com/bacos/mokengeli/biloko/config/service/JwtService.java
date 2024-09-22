@@ -1,4 +1,4 @@
-package com.bacos.mokengeli.biloko.application.domain.service;
+package com.bacos.mokengeli.biloko.config.service;
 
 
 import io.jsonwebtoken.Claims;
