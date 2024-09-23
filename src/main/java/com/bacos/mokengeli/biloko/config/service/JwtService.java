@@ -1,6 +1,7 @@
 package com.bacos.mokengeli.biloko.config.service;
 
 
+import com.bacos.mokengeli.biloko.application.domain.model.UserInfo;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -22,7 +23,7 @@ public class JwtService {
 
 
     private final String secretKey;
-    private  final Integer jwtExpiration;
+    private final Integer jwtExpiration;
 
     @Autowired
     public JwtService(@Value("${security.jwt.secret}") String secretKey,
@@ -63,17 +64,20 @@ public class JwtService {
     }
 
     private Key getSignKey() {
-       // byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+        // byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 
-    public String generateJwtToken(Authentication authentication){
+    public String generateJwtToken(Authentication authentication) {
         String token = null;
         if (null != authentication) {
+            UserInfo userInfo = (UserInfo) authentication.getPrincipal();
+            List<String> roles = userInfo.getRoles();
             SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
             token = Jwts.builder().issuer("BACOS-TECH")
                     .subject(authentication.getName())
-                    .claim("authorities", populateAuthorities(authentication.getAuthorities()))
+                    .claim("permissions", populateAuthorities(authentication.getAuthorities()))
+                    .claim("roles", roles)
                     .issuedAt(new Date())
                     .expiration(new Date((new Date()).getTime() + jwtExpiration))
                     .signWith(key).compact();
@@ -82,12 +86,12 @@ public class JwtService {
         return token;
     }
 
-    private static String populateAuthorities(Collection<? extends GrantedAuthority> collection) {
+    private static Set<String> populateAuthorities(Collection<? extends GrantedAuthority> collection) {
         Set<String> authoritiesSet = new HashSet<>();
         for (GrantedAuthority authority : collection) {
             authoritiesSet.add(authority.getAuthority());
         }
-        return String.join(",", authoritiesSet);
+        return authoritiesSet;
     }
 
     public Integer getJwtExpiration() {
