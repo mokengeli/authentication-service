@@ -19,6 +19,7 @@ public class CustomUserInfoDetails extends UserInfo implements UserDetails {
     public CustomUserInfoDetails(UserInfo user) {
         setId(user.getId());
         setEmail(user.getEmail());
+        setTenantCode(user.getTenantCode());
         this.username = user.getEmployeeNumber();
         this.password = user.getPassword();
         setRoles(user.getRoles());

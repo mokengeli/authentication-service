@@ -76,6 +76,7 @@ public class JwtService {
             SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
             token = Jwts.builder().issuer("BACOS-TECH")
                     .subject(authentication.getName())
+                    .claim("tenantCode", userInfo.getTenantCode())
                     .claim("permissions", populateAuthorities(authentication.getAuthorities()))
                     .claim("roles", roles)
                     .issuedAt(new Date())
