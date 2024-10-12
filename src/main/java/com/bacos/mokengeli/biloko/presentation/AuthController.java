@@ -47,6 +47,7 @@ public class AuthController {
         authenticationService.registerNewUser(userRequest);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
+
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(HttpServletResponse response, @RequestBody LoginRequest loginRequest) {
         try {
@@ -57,11 +58,15 @@ public class AuthController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             this.cookieService.addNewAccessTokenToResponse(response, authentication);
 
-            Optional<UserInfo> user = authenticationService.findUserByUserName(principal.getUsername());
+            Optional<UserInfo> OptUser = authenticationService.findUserByUserName(principal.getUsername());
             List<String> permissions = principal.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
-            List<String> roles = user.get().getRoles();
-            return ResponseEntity.ok(new AuthResponseDto(user.get().getId(),
-                    user.get().getEmployeeNumber(), user.get().getEmail(), roles, permissions));
+            UserInfo user = OptUser.get();
+            List<String> roles = user.getRoles();
+            return ResponseEntity.ok(AuthResponseDto.builder()
+                    .id(user.getId()).email(user.getEmail())
+                    .firstName(user.getFirstName()).lastName(user.getLastName())
+                    .postName(user.getPostName()).permissions(user.getPermissions())
+                    .roles(user.getRoles()).build());
         } catch (Exception e) {
             throw new ResponseStatusWrapperException(HttpStatus.BAD_REQUEST, "Login failed: " + e.getMessage());
         }
