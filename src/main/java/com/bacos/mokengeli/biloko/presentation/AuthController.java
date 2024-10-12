@@ -59,9 +59,9 @@ public class AuthController {
             this.cookieService.addNewAccessTokenToResponse(response, authentication);
 
             Optional<UserInfo> OptUser = authenticationService.findUserByUserName(principal.getUsername());
-            List<String> permissions = principal.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
+            //List<String> permissions = principal.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
             UserInfo user = OptUser.get();
-            List<String> roles = user.getRoles();
+           // List<String> roles = user.getRoles();
             return ResponseEntity.ok(AuthResponseDto.builder()
                     .id(user.getId()).email(user.getEmail())
                     .firstName(user.getFirstName()).lastName(user.getLastName())
