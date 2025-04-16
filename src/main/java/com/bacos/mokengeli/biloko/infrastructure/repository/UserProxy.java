@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(name = "user-service")
 public interface UserProxy {
 
-    @GetMapping("/api/users/by-username")
+    @GetMapping("/api/user/by-username")
     UserInfo findByUserName(@RequestParam("username") String username);
 
-    @PostMapping("/api/users")
+    @PostMapping("/api/user")
     void createUser(@RequestBody UserInfo userRequest);
 }
