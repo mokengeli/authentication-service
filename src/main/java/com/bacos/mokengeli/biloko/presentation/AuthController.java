@@ -1,6 +1,6 @@
 package com.bacos.mokengeli.biloko.presentation;
 
-import com.bacos.mokengeli.biloko.application.domain.model.UserInfo;
+import com.bacos.mokengeli.biloko.application.domain.model.DomainUser;
 import com.bacos.mokengeli.biloko.application.domain.service.AuthenticationService;
 import com.bacos.mokengeli.biloko.config.service.CookieService;
 import com.bacos.mokengeli.biloko.config.service.CustomUserInfoDetails;
@@ -16,11 +16,9 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -56,9 +54,9 @@ public class AuthController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             this.cookieService.addNewAccessTokenToResponse(response, authentication);
 
-            Optional<UserInfo> OptUser = authenticationService.findUserByUserName(principal.getUsername());
+            Optional<DomainUser> OptUser = authenticationService.findUserByUserName(principal.getUsername());
             //List<String> permissions = principal.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
-            UserInfo user = OptUser.get();
+            DomainUser user = OptUser.get();
             // List<String> roles = user.getRoles();
             return ResponseEntity.ok(AuthResponseDto.builder()
                     .id(user.getId()).email(user.getEmail())
@@ -84,12 +82,12 @@ public class AuthController {
         CustomUserInfoDetails principal = (CustomUserInfoDetails) authentication.getPrincipal();
 
         // Recherche des informations complètes de l'utilisateur via le service
-        Optional<UserInfo> optUser = authenticationService.findUserByUserName(principal.getUsername());
+        Optional<DomainUser> optUser = authenticationService.findUserByUserName(principal.getUsername());
         if (optUser.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utilisateur introuvable");
         }
 
-        UserInfo user = optUser.get();
+        DomainUser user = optUser.get();
 
         // Construction de la réponse basée sur AuthResponseDto
         AuthResponseDto responseDto = AuthResponseDto.builder()

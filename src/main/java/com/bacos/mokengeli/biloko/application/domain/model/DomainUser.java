@@ -12,7 +12,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserInfo {
+public class DomainUser {
     private Long id;
     private Long tenantId;
     private String tenantCode;

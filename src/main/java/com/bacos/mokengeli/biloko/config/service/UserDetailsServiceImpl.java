@@ -1,6 +1,6 @@
 package com.bacos.mokengeli.biloko.config.service;
 
-import com.bacos.mokengeli.biloko.application.domain.model.UserInfo;
+import com.bacos.mokengeli.biloko.application.domain.model.DomainUser;
 
 import com.bacos.mokengeli.biloko.application.domain.service.AuthenticationService;
 import lombok.extern.slf4j.Slf4j;
@@ -24,12 +24,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.debug("Entering in loadUserByUsername Method...");
-        Optional<UserInfo> optUser = authenticationService.findUserByUserName(username);
+        Optional<DomainUser> optUser = authenticationService.findUserByUserName(username);
         if (optUser.isEmpty()) {
             log.error("Username not found: " + username);
             throw new UsernameNotFoundException("could not found user..!!");
         }
-        log.info("User Authenticated Successfully..!!!");
+        log.info("loadUserByUsername username {}..!!!",username);
         return new CustomUserInfoDetails(optUser.get());
 
     }
