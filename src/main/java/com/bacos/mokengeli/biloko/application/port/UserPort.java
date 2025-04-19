@@ -6,7 +6,7 @@ import com.bacos.mokengeli.biloko.application.domain.model.DomainUser;
 import java.util.Optional;
 
 public interface UserPort {
-    Optional<DomainUser> findByUserName(String email);
-    void createUser(DomainUser user);
+    Optional<DomainUser> findByEmployeeNumber(String email);
+    Optional<DomainUser> createUser(DomainUser user);
 
 }

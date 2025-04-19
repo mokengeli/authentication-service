@@ -39,9 +39,14 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Void> registerUser(@RequestBody UserRequest userRequest) {
-        authenticationService.registerNewUser(userRequest);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public ResponseEntity<DomainUser> registerUser(@RequestBody UserRequest userRequest) {
+        try {
+            DomainUser domainUser = authenticationService.registerNewUser(userRequest);
+            return ResponseEntity.ok(domainUser);
+        } catch (Exception e) {
+            throw new ResponseStatusWrapperException(HttpStatus.BAD_REQUEST, "Creation failed: " + e.getMessage());
+        }
+
     }
 
     @PostMapping("/login")
@@ -54,7 +59,7 @@ public class AuthController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             this.cookieService.addNewAccessTokenToResponse(response, authentication);
 
-            Optional<DomainUser> OptUser = authenticationService.findUserByUserName(principal.getUsername());
+            Optional<DomainUser> OptUser = authenticationService.findUserByEmployeeNumber(principal.getUsername());
             //List<String> permissions = principal.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
             DomainUser user = OptUser.get();
             // List<String> roles = user.getRoles();
@@ -68,6 +73,7 @@ public class AuthController {
             throw new ResponseStatusWrapperException(HttpStatus.BAD_REQUEST, "Login failed: " + e.getMessage());
         }
     }
+
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUserInfo() {
         // Récupération de l'Authentication depuis le SecurityContext
@@ -82,7 +88,7 @@ public class AuthController {
         CustomUserInfoDetails principal = (CustomUserInfoDetails) authentication.getPrincipal();
 
         // Recherche des informations complètes de l'utilisateur via le service
-        Optional<DomainUser> optUser = authenticationService.findUserByUserName(principal.getUsername());
+        Optional<DomainUser> optUser = authenticationService.findUserByEmployeeNumber(principal.getUsername());
         if (optUser.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utilisateur introuvable");
         }

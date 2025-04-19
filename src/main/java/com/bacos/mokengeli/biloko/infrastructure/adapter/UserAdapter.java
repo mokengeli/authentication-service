@@ -24,7 +24,7 @@ public class UserAdapter implements UserPort {
     }
 
     @Override
-    public Optional<DomainUser> findByUserName(String employeeNumber) {
+    public Optional<DomainUser> findByEmployeeNumber(String employeeNumber) {
         Optional<User> optUser = this.userRepository.findByEmployeeNumber(employeeNumber);
         if (optUser.isEmpty()) {
             return Optional.empty();
@@ -34,7 +34,7 @@ public class UserAdapter implements UserPort {
     }
 
     @Override
-    public void createUser(DomainUser user) {
-        userProxy.createUser(user);
+    public Optional<DomainUser> createUser(DomainUser user) {
+        return userProxy.createUser(user);
     }
 }

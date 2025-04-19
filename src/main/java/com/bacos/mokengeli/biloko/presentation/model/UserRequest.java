@@ -13,10 +13,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserRequest {
-    private Long tenantId;
+    private String tenantCode;
     private String firstName;
     private String lastName;
     private String postName;
     private String email;
     private String password;
+    private String role;
 }

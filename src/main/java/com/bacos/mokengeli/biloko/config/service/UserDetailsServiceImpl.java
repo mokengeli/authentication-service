@@ -24,7 +24,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.debug("Entering in loadUserByUsername Method...");
-        Optional<DomainUser> optUser = authenticationService.findUserByUserName(username);
+        Optional<DomainUser> optUser = authenticationService.findUserByEmployeeNumber(username);
         if (optUser.isEmpty()) {
             log.error("Username not found: " + username);
             throw new UsernameNotFoundException("could not found user..!!");
