@@ -8,7 +8,9 @@ import com.bacos.mokengeli.biloko.presentation.exception.ResponseStatusWrapperEx
 import com.bacos.mokengeli.biloko.presentation.model.AuthResponseDto;
 import com.bacos.mokengeli.biloko.presentation.model.LoginRequest;
 import com.bacos.mokengeli.biloko.presentation.model.UserRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -110,5 +112,17 @@ public class AuthController {
         return ResponseEntity.ok(responseDto);
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
+
+
+        // Nettoyer le cookie (par ex. enlever JSESSIONID ou ton propre cookie d'authentification)
+        cookieService.clearAccessTokenFromResponse(request, response);
+
+        // Nettoyer le SecurityContext
+        SecurityContextHolder.clearContext();
+
+        return ResponseEntity.ok("Déconnexion réussie");
+    }
 
 }

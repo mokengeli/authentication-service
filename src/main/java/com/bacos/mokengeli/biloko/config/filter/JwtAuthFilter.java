@@ -35,6 +35,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String token = null;
         String username = null;
+
+
+        String path = request.getServletPath();
+
+        // Skip JWT checks on login (and any other public endpoints)
+        if ("/api/auth/login".equals(path)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
                 if (cookie.getName().equals("accessToken")) {

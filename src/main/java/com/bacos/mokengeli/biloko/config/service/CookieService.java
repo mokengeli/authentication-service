@@ -3,6 +3,7 @@ package com.bacos.mokengeli.biloko.config.service;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -32,9 +33,12 @@ public class CookieService {
         response.addCookie(cookie);
     }
 
-    public void removeAccessToken(HttpServletRequest request, HttpServletResponse response) {
-        // Invalidate session
-        request.getSession().invalidate();
+    public void clearAccessTokenFromResponse(HttpServletRequest request, HttpServletResponse response) {
+        // Invalider la session HTTP
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
 
         // Remove accessToken cookie
         Cookie cookie = new Cookie("accessToken", null);
@@ -44,4 +48,6 @@ public class CookieService {
         cookie.setMaxAge(0);
         response.addCookie(cookie);
     }
+
+
 }
