@@ -52,7 +52,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> authenticateUser(HttpServletResponse response, @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<AuthResponseDto> authenticateUser(HttpServletResponse response, @RequestBody LoginRequest loginRequest) {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
@@ -77,13 +77,13 @@ public class AuthController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<?> getCurrentUserInfo() {
+    public ResponseEntity<AuthResponseDto> getCurrentUserInfo() {
         // Récupération de l'Authentication depuis le SecurityContext
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null || !authentication.isAuthenticated()
                 || authentication instanceof AnonymousAuthenticationToken) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Utilisateur non authentifié");
+            throw new ResponseStatusWrapperException(HttpStatus.UNAUTHORIZED, "user not authentify");
         }
 
         // Extraction du principal qui doit être de type CustomUserInfoDetails
@@ -92,7 +92,7 @@ public class AuthController {
         // Recherche des informations complètes de l'utilisateur via le service
         Optional<DomainUser> optUser = authenticationService.findUserByEmployeeNumber(principal.getUsername());
         if (optUser.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utilisateur introuvable");
+            throw new ResponseStatusWrapperException(HttpStatus.BAD_REQUEST, "User not found");
         }
 
         DomainUser user = optUser.get();

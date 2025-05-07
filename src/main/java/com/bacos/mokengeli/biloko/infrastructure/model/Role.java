@@ -28,7 +28,7 @@ public class Role {
     // Relation Many-to-Many avec Permissions
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.EAGER)
     @JoinTable(
-            name = "role_permissions",  // Table intermédiaire
+            name = "roles_permissions",  // Table intermédiaire
             joinColumns = @JoinColumn(name = "role_id"),
             inverseJoinColumns = @JoinColumn(name = "permission_id")
     )

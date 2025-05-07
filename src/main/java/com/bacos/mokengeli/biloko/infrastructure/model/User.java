@@ -28,7 +28,7 @@ public class User {
 
     private String postName;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String email;
 
     @Column(name = "employee_number", nullable = false, unique = true)
@@ -48,14 +48,14 @@ public class User {
     private LocalDateTime updatedAt;
 
     // Relation avec le Tenant (Many-to-One)
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tenant_id", nullable = false)
     private Tenant tenant;
 
     // Relation Many-to-Many avec les Rôles via UserRole
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.EAGER)
     @JoinTable(
-            name = "user_roles",
+            name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
@@ -63,5 +63,6 @@ public class User {
     @EqualsAndHashCode.Exclude  // Exclut du hashCode et equals
     @ToString.Exclude  // Exclut du toString()
     private Set<Role> roles;
+
 
 }

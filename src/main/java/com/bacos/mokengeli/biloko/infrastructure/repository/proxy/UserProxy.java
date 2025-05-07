@@ -1,12 +1,10 @@
-package com.bacos.mokengeli.biloko.infrastructure.repository;
+package com.bacos.mokengeli.biloko.infrastructure.repository.proxy;
 
 
 import com.bacos.mokengeli.biloko.application.domain.model.DomainUser;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Optional;
 

@@ -19,4 +19,5 @@ public class AuthResponseDto {
     private String lastName;
     private String postName;
     private String tenantCode;
+    private String subscription;
 }

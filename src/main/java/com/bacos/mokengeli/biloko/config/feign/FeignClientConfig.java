@@ -17,20 +17,15 @@ public class FeignClientConfig {
         return new RequestInterceptor() {
             @Override
             public void apply(RequestTemplate template) {
-                // Récupère la requête HTTP courante
-                ServletRequestAttributes attrs =
-                        (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+                ServletRequestAttributes attrs = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
                 if (attrs == null) {
                     return; // pas de contexte HTTP (ex : appel en background)
                 }
                 HttpServletRequest request = attrs.getRequest();
-
-                // Parcours des cookies pour trouver "accessToken"
                 if (request.getCookies() != null) {
                     for (Cookie cookie : request.getCookies()) {
                         if ("accessToken".equals(cookie.getName())) {
                             String token = cookie.getValue();
-                            // Injecte le cookie dans l'appel Feign
                             template.header("Cookie", "accessToken=" + token);
                             break;
                         }
