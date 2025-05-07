@@ -1,7 +1,7 @@
 package com.bacos.mokengeli.biloko.config.service;
 
 
-import com.bacos.mokengeli.biloko.application.domain.model.DomainUser;
+import com.bacos.mokengeli.biloko.application.domain.DomainUser;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

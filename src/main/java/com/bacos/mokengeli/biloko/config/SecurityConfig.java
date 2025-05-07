@@ -27,12 +27,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private JwtAuthFilter jwtAuthFilter;
-    private String allowedOrigins;
+
     @Autowired
     public SecurityConfig(@Value("${security.cors.allowed-origins}") String allowedOrigins,
                           JwtAuthFilter jwtAuthFilter) {
         this.jwtAuthFilter = jwtAuthFilter;
-        this.allowedOrigins = allowedOrigins;
     }
 
     @Bean
@@ -55,8 +54,6 @@ public class SecurityConfig {
     public UserDetailsService userDetailsService() {
         return new UserDetailsServiceImpl();
     }
-
-
 
 
     @Bean

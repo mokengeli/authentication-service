@@ -1,4 +1,4 @@
-package com.bacos.mokengeli.biloko.exception;
+package com.bacos.mokengeli.biloko.application.exception;
 
 import lombok.Getter;
 

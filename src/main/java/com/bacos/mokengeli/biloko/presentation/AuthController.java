@@ -1,16 +1,18 @@
 package com.bacos.mokengeli.biloko.presentation;
 
-import com.bacos.mokengeli.biloko.application.domain.model.DomainUser;
-import com.bacos.mokengeli.biloko.application.domain.service.AuthenticationService;
+import com.bacos.mokengeli.biloko.application.domain.DomainUser;
+import com.bacos.mokengeli.biloko.application.service.AuthenticationService;
 import com.bacos.mokengeli.biloko.config.service.CookieService;
 import com.bacos.mokengeli.biloko.config.service.CustomUserInfoDetails;
+import com.bacos.mokengeli.biloko.application.exception.ServiceException;
 import com.bacos.mokengeli.biloko.presentation.exception.ResponseStatusWrapperException;
 import com.bacos.mokengeli.biloko.presentation.model.AuthResponseDto;
+import com.bacos.mokengeli.biloko.presentation.model.ChangePasswordRequest;
 import com.bacos.mokengeli.biloko.presentation.model.LoginRequest;
 import com.bacos.mokengeli.biloko.presentation.model.UserRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -123,6 +125,16 @@ public class AuthController {
         SecurityContextHolder.clearContext();
 
         return ResponseEntity.ok("Déconnexion réussie");
+    }
+
+    @PatchMapping("/password")
+    public void changePassword(@Valid @RequestBody ChangePasswordRequest req) {
+        try {
+            this.authenticationService.changePassword(req.getOldPassword(), req.getNewPassword());
+        } catch (ServiceException e) {
+            throw new ResponseStatusWrapperException(
+                    HttpStatus.BAD_REQUEST, e.getMessage(), e.getTechnicalId());
+        }
     }
 
 }

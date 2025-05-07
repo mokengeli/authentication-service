@@ -1,8 +1,8 @@
 package com.bacos.mokengeli.biloko.config.service;
 
-import com.bacos.mokengeli.biloko.application.domain.model.DomainUser;
+import com.bacos.mokengeli.biloko.application.domain.DomainUser;
 
-import com.bacos.mokengeli.biloko.application.domain.service.AuthenticationService;
+import com.bacos.mokengeli.biloko.application.service.AuthenticationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

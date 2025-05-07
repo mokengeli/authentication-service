@@ -5,16 +5,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Type d’enseigne (restaurant, bar, lounge, platform…).
- */
-@Data
+import java.util.List;
+
 @Builder
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class DomainEstablishmentType {
-    private Long   id;
-    private String code;
-    private String label;
-    private String description;
+public class ConnectedUser {
+    private String tenantCode;
+    private String employeeNumber;
+    private List<String> roles;
+    private List<String> permissions;
 }

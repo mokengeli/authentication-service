@@ -1,7 +1,7 @@
 package com.bacos.mokengeli.biloko.infrastructure.repository.proxy;
 
 
-import com.bacos.mokengeli.biloko.application.domain.model.DomainUser;
+import com.bacos.mokengeli.biloko.application.domain.DomainUser;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

@@ -1,8 +1,10 @@
-package com.bacos.mokengeli.biloko.application.domain.service;
+package com.bacos.mokengeli.biloko.application.service;
 
-import com.bacos.mokengeli.biloko.application.domain.model.DomainUser;
+import com.bacos.mokengeli.biloko.application.domain.DomainUser;
+import com.bacos.mokengeli.biloko.application.domain.model.ConnectedUser;
+import com.bacos.mokengeli.biloko.application.exception.ServiceException;
 import com.bacos.mokengeli.biloko.application.port.UserPort;
-import com.bacos.mokengeli.biloko.exception.ServiceException;
+import com.bacos.mokengeli.biloko.config.service.CustomUserInfoDetails;
 import com.bacos.mokengeli.biloko.presentation.model.UserRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -10,6 +12,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,11 +27,13 @@ public class AuthenticationService {
 
     private final UserPort userPort;
     private final PasswordEncoder passwordEncoder;
+    private final UserAppService userAppService;
 
     @Lazy
-    public AuthenticationService(@Lazy UserPort userPort, PasswordEncoder passwordEncoder) {
+    public AuthenticationService(@Lazy UserPort userPort, PasswordEncoder passwordEncoder, UserAppService userAppService) {
         this.userPort = userPort;
         this.passwordEncoder = passwordEncoder;
+        this.userAppService = userAppService;
     }
 
     public Optional<DomainUser> findUserByEmployeeNumber(String username) {
@@ -79,5 +85,28 @@ public class AuthenticationService {
 
         }
 
+    }
+
+    public void changePassword(String oldPwd, String newPwd) throws ServiceException {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserInfoDetails cu = (CustomUserInfoDetails) authentication.getPrincipal();
+        String employeeNumber = cu.getUsername();
+        String pwd = userPort
+                .getPassword(employeeNumber).orElseThrow(() -> new ServiceException(UUID.randomUUID().toString(),
+                        "Utilisateur introuvable"));
+
+        if (!passwordEncoder.matches(oldPwd, pwd)) {
+            throw new ServiceException(UUID.randomUUID().toString(),
+                    "Ancien mot de passe incorrect");
+        }
+        try {
+            userPort.updatePassword(employeeNumber, passwordEncoder.encode(newPwd));
+        } catch (ServiceException d) {
+            String uuid = UUID.randomUUID().toString();
+            log.error("[{}]: User [{}] une erreur a été capturée",
+                    uuid, cu.getEmployeeNumber(), d);
+            throw new ServiceException(uuid, "Une erreur est survenue lors du changement du mot de passe ");
+        }
     }
 }

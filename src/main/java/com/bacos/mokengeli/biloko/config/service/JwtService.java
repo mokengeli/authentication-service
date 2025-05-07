@@ -1,7 +1,7 @@
 package com.bacos.mokengeli.biloko.config.service;
 
 
-import com.bacos.mokengeli.biloko.application.domain.model.DomainUser;
+import com.bacos.mokengeli.biloko.application.domain.DomainUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -97,5 +97,20 @@ public class JwtService {
 
     public Integer getJwtExpiration() {
         return jwtExpiration;
+    }
+
+    public String getTenantCode(String token) {
+        Claims claims = extractAllClaims(token);
+        return claims.get("tenantCode", String.class);
+    }
+
+    public List<String> getRoles(String token) {
+        Claims claims = extractAllClaims(token);
+        return claims.get("roles", List.class);
+    }
+
+    public List<String> getPermissions(String token) {
+        Claims claims = extractAllClaims(token);
+        return claims.get("permissions", List.class);
     }
 }

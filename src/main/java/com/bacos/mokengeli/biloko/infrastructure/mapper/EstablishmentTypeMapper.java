@@ -1,7 +1,7 @@
 package com.bacos.mokengeli.biloko.infrastructure.mapper;
 
 
-import com.bacos.mokengeli.biloko.application.domain.model.DomainEstablishmentType;
+import com.bacos.mokengeli.biloko.application.domain.DomainEstablishmentType;
 import com.bacos.mokengeli.biloko.infrastructure.model.EstablishmentType;
 import lombok.experimental.UtilityClass;
 

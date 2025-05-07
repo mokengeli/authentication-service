@@ -1,6 +1,6 @@
 package com.bacos.mokengeli.biloko.infrastructure.mapper;
 
-import com.bacos.mokengeli.biloko.application.domain.model.DomainSubscriptionPlan;
+import com.bacos.mokengeli.biloko.application.domain.DomainSubscriptionPlan;
 import com.bacos.mokengeli.biloko.infrastructure.model.SubscriptionPlan;
 import lombok.experimental.UtilityClass;
 
