@@ -88,10 +88,8 @@ public class AuthenticationService {
     }
 
     public void changePassword(String oldPwd, String newPwd) throws ServiceException {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserInfoDetails cu = (CustomUserInfoDetails) authentication.getPrincipal();
-        String employeeNumber = cu.getUsername();
+        ConnectedUser cu = this.userAppService.getConnectedUser();
+        String employeeNumber = cu.getEmployeeNumber();
         String pwd = userPort
                 .getPassword(employeeNumber).orElseThrow(() -> new ServiceException(UUID.randomUUID().toString(),
                         "Utilisateur introuvable"));

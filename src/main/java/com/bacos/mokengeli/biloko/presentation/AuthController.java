@@ -1,9 +1,9 @@
 package com.bacos.mokengeli.biloko.presentation;
 
 import com.bacos.mokengeli.biloko.application.domain.DomainUser;
+import com.bacos.mokengeli.biloko.application.domain.model.ConnectedUser;
 import com.bacos.mokengeli.biloko.application.service.AuthenticationService;
 import com.bacos.mokengeli.biloko.config.service.CookieService;
-import com.bacos.mokengeli.biloko.config.service.CustomUserInfoDetails;
 import com.bacos.mokengeli.biloko.application.exception.ServiceException;
 import com.bacos.mokengeli.biloko.presentation.exception.ResponseStatusWrapperException;
 import com.bacos.mokengeli.biloko.presentation.model.AuthResponseDto;
@@ -59,19 +59,22 @@ public class AuthController {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
             );
-            CustomUserInfoDetails principal = (CustomUserInfoDetails) authentication.getPrincipal();
+            ConnectedUser principal = (ConnectedUser) authentication.getPrincipal();
             SecurityContextHolder.getContext().setAuthentication(authentication);
             this.cookieService.addNewAccessTokenToResponse(response, authentication);
 
-            Optional<DomainUser> OptUser = authenticationService.findUserByEmployeeNumber(principal.getUsername());
-            //List<String> permissions = principal.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
+            Optional<DomainUser> OptUser = authenticationService.findUserByEmployeeNumber(principal.getEmployeeNumber());
             DomainUser user = OptUser.get();
-            // List<String> roles = user.getRoles();
             return ResponseEntity.ok(AuthResponseDto.builder()
                     .id(user.getId()).email(user.getEmail())
                     .firstName(user.getFirstName()).lastName(user.getLastName())
                     .postName(user.getPostName()).permissions(user.getPermissions())
                     .tenantCode(user.getTenantCode())
+                    .tenantName(user.getTenantName())
+                    .employeeNumber(user.getEmployeeNumber())
+                    .createdAt(user.getCreatedAt())
+                    .subscriptionCode(user.getTenantSubscriptionPlan().getCode())
+                    .establishmentCode(user.getTenantEstablishmentType().getCode())
                     .roles(user.getRoles()).build());
         } catch (Exception e) {
             throw new ResponseStatusWrapperException(HttpStatus.BAD_REQUEST, "Login failed: " + e.getMessage());
@@ -89,10 +92,10 @@ public class AuthController {
         }
 
         // Extraction du principal qui doit être de type CustomUserInfoDetails
-        CustomUserInfoDetails principal = (CustomUserInfoDetails) authentication.getPrincipal();
+        ConnectedUser principal = (ConnectedUser) authentication.getPrincipal();
 
         // Recherche des informations complètes de l'utilisateur via le service
-        Optional<DomainUser> optUser = authenticationService.findUserByEmployeeNumber(principal.getUsername());
+        Optional<DomainUser> optUser = authenticationService.findUserByEmployeeNumber(principal.getEmployeeNumber());
         if (optUser.isEmpty()) {
             throw new ResponseStatusWrapperException(HttpStatus.BAD_REQUEST, "User not found");
         }
@@ -108,6 +111,11 @@ public class AuthController {
                 .postName(user.getPostName())
                 .permissions(user.getPermissions())
                 .tenantCode(user.getTenantCode())
+                .tenantName(user.getTenantName())
+                .employeeNumber(user.getEmployeeNumber())
+                .createdAt(user.getCreatedAt())
+                .subscriptionCode(user.getTenantSubscriptionPlan().getCode())
+                .establishmentCode(user.getTenantEstablishmentType().getCode())
                 .roles(user.getRoles())
                 .build();
 

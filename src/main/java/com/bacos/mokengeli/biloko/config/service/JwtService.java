@@ -2,6 +2,7 @@ package com.bacos.mokengeli.biloko.config.service;
 
 
 import com.bacos.mokengeli.biloko.application.domain.DomainUser;
+import com.bacos.mokengeli.biloko.application.domain.model.ConnectedUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -71,7 +72,7 @@ public class JwtService {
     public String generateJwtToken(Authentication authentication) {
         String token = null;
         if (null != authentication) {
-            DomainUser domainUser = (DomainUser) authentication.getPrincipal();
+            ConnectedUser domainUser = (ConnectedUser) authentication.getPrincipal();
             List<String> roles = domainUser.getRoles();
             SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
             token = Jwts.builder().issuer("BACOS-TECH")

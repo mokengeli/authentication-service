@@ -66,7 +66,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(username);
             if (jwtService.validateToken(token, userDetails)) {
-                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                String tenantCode = this.jwtService.getTenantCode(token);
+                List<String> roles = this.jwtService.getRoles(token);
+                List<String> permissions = this.jwtService.getPermissions(token);
+                List<GrantedAuthority> grantedAuthorities = getAuthoritiesFromJWT(permissions);
+
+                ConnectedUser connectedUser = createUser(username, tenantCode, roles, permissions);
+                UsernamePasswordAuthenticationToken authenticationToken =
+                        new UsernamePasswordAuthenticationToken(connectedUser, null, grantedAuthorities);
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
@@ -74,6 +81,20 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private ConnectedUser createUser(String username, String tenantCode, List<String> roles, List<String> permissions) {
+
+        return ConnectedUser.builder()
+                .employeeNumber(username)
+                .tenantCode(tenantCode)
+                .roles(roles)
+                .permissions(permissions)
+                .build();
+    }
+
+    public List<GrantedAuthority> getAuthoritiesFromJWT(List<String> authorities) {
+        return authorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     }
 
 }

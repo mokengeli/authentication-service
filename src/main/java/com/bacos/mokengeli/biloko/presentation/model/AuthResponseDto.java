@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Builder
@@ -11,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 public class AuthResponseDto {
     private Long id;
-    private String username;
+    private String employeeNumber;
     private String email;
     private List<String> roles;
     private List<String> permissions;
@@ -19,5 +20,8 @@ public class AuthResponseDto {
     private String lastName;
     private String postName;
     private String tenantCode;
-    private String subscription;
+    private String tenantName;
+    private String subscriptionCode;
+    private String establishmentCode;
+    private LocalDateTime createdAt;
 }

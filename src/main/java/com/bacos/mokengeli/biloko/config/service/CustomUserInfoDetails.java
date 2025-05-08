@@ -2,6 +2,7 @@ package com.bacos.mokengeli.biloko.config.service;
 
 
 import com.bacos.mokengeli.biloko.application.domain.DomainUser;
+import com.bacos.mokengeli.biloko.application.domain.model.ConnectedUser;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,15 +11,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class CustomUserInfoDetails extends DomainUser implements UserDetails {
+public class CustomUserInfoDetails extends ConnectedUser implements UserDetails {
 
     private String username;
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
 
     public CustomUserInfoDetails(DomainUser user) {
-        setId(user.getId());
-        setEmail(user.getEmail());
+
         setTenantCode(user.getTenantCode());
         this.username = user.getEmployeeNumber();
         this.password = user.getPassword();
