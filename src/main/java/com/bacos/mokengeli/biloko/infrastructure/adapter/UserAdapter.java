@@ -35,7 +35,7 @@ public class UserAdapter implements UserPort {
             return Optional.empty();
         }
         User user = optUser.get();
-        return Optional.of(UserMapper.toDomain(user));
+        return Optional.of(UserMapper.toDomainWithPwd(user));
     }
 
     @Override

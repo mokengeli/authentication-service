@@ -23,6 +23,7 @@ public class CustomUserInfoDetails extends ConnectedUser implements UserDetails 
         this.username = user.getEmployeeNumber();
         this.password = user.getPassword();
         setRoles(user.getRoles());
+        setEmployeeNumber(user.getEmployeeNumber());
         List<GrantedAuthority> auths = new ArrayList<>();
 
         for (String permission : user.getPermissions()) {

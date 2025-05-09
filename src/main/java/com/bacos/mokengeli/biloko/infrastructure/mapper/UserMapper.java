@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @UtilityClass
 public class UserMapper {
 
-    public DomainUser toDomain(final User user) {
+    public DomainUser toDomainWithPwd(final User user) {
         if (user == null) return null;
 
         // Récupérer le tenant
