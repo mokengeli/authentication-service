@@ -4,16 +4,19 @@ spring:
   application:
     name: auth-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/mokengeli_biloko_db
+    url: jdbc:postgresql://localhost:5432/mokengeli_db
     username: user1
     password: password
     driver-class-name: org.postgresql.Driver
+    hikari:
+      schema: user_schema
   jpa: # Hibernate crée/mettre à jour les tables automatiquement
-    show-sql: true                                          # Affiche les requêtes SQL générées dans la console
     properties:
       hibernate:
-        default_schema: user_schema                 # Spécifie le schéma PostgreSQL à utiliser
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          time_zone: GMT+01:00
+  jackson:
+    time-zone: GMT+01:00
 security:
   cors:
     allowed-origins: http://localhost:3000
