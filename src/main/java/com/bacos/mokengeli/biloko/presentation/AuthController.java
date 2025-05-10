@@ -1,8 +1,11 @@
 package com.bacos.mokengeli.biloko.presentation;
 
 import com.bacos.mokengeli.biloko.application.domain.DomainUser;
+import com.bacos.mokengeli.biloko.application.domain.PlatformTypeEnum;
 import com.bacos.mokengeli.biloko.application.domain.model.ConnectedUser;
 import com.bacos.mokengeli.biloko.application.service.AuthenticationService;
+import com.bacos.mokengeli.biloko.application.service.JtiService;
+import com.bacos.mokengeli.biloko.application.service.UserAppService;
 import com.bacos.mokengeli.biloko.config.service.CookieService;
 import com.bacos.mokengeli.biloko.application.exception.ServiceException;
 import com.bacos.mokengeli.biloko.presentation.exception.ResponseStatusWrapperException;
@@ -23,7 +26,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -33,13 +38,17 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
 
     private final CookieService cookieService;
+    private final JtiService jtiService;
+    private final UserAppService userAppService;
 
     @Autowired
     public AuthController(AuthenticationService authenticationService, AuthenticationManager authenticationManager,
-                          CookieService cookieService) {
+                          CookieService cookieService, JtiService jtiService, UserAppService userAppService) {
         this.authenticationService = authenticationService;
         this.authenticationManager = authenticationManager;
         this.cookieService = cookieService;
+        this.jtiService = jtiService;
+        this.userAppService = userAppService;
     }
 
     @PostMapping("/register")
@@ -60,6 +69,13 @@ public class AuthController {
                     new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
             );
             ConnectedUser principal = (ConnectedUser) authentication.getPrincipal();
+
+            String platformType = loginRequest.getPlatformType();
+            PlatformTypeEnum[] values = PlatformTypeEnum.values();
+            if (values.length == 0 || !Arrays.asList(values).contains(PlatformTypeEnum.valueOf(platformType))) {
+                throw new ResponseStatusWrapperException(HttpStatus.BAD_REQUEST, "Login failed: Plateform type not found");
+            }
+            principal.setPlatformTypeEnum(PlatformTypeEnum.valueOf(platformType));
             SecurityContextHolder.getContext().setAuthentication(authentication);
             this.cookieService.addNewAccessTokenToResponse(response, authentication);
 
@@ -124,7 +140,8 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
-
+        ConnectedUser user = userAppService.getConnectedUser();
+        jtiService.invalidateSession(user.getJti());
 
         // Nettoyer le cookie (par ex. enlever JSESSIONID ou ton propre cookie d'authentification)
         cookieService.clearAccessTokenFromResponse(request, response);
@@ -143,6 +160,17 @@ public class AuthController {
             throw new ResponseStatusWrapperException(
                     HttpStatus.BAD_REQUEST, e.getMessage(), e.getTechnicalId());
         }
+    }
+
+    @GetMapping("/internal/jti")
+    public ResponseEntity<String> introspectJti(
+            @RequestParam String employeeNumber,
+            @RequestParam String appType
+    ) {
+        return jtiService.getActiveJti(employeeNumber, appType)
+                .map(UUID::toString)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
 }

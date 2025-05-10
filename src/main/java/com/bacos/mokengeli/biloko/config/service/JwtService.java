@@ -1,8 +1,8 @@
 package com.bacos.mokengeli.biloko.config.service;
 
 
-import com.bacos.mokengeli.biloko.application.domain.DomainUser;
 import com.bacos.mokengeli.biloko.application.domain.model.ConnectedUser;
+import com.bacos.mokengeli.biloko.application.service.JtiService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -16,6 +16,9 @@ import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Function;
 
@@ -25,12 +28,14 @@ public class JwtService {
 
     private final String secretKey;
     private final Integer jwtExpiration;
+    private final JtiService jtiService;
 
     @Autowired
     public JwtService(@Value("${security.jwt.secret}") String secretKey,
-                      @Value("${security.jwt.expiration-time}") Integer jwtExpiration) {
+                      @Value("${security.jwt.expiration-time}") Integer jwtExpiration, JtiService jtiService) {
         this.secretKey = secretKey;
         this.jwtExpiration = jwtExpiration;
+        this.jtiService = jtiService;
     }
 
     public String extractUsername(String token) {
@@ -70,23 +75,40 @@ public class JwtService {
     }
 
     public String generateJwtToken(Authentication authentication) {
-        String token = null;
-        if (null != authentication) {
-            ConnectedUser domainUser = (ConnectedUser) authentication.getPrincipal();
-            List<String> roles = domainUser.getRoles();
-            SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
-            token = Jwts.builder().issuer("BACOS-TECH")
-                    .subject(authentication.getName())
-                    .claim("tenantCode", domainUser.getTenantCode())
-                    .claim("permissions", populateAuthorities(authentication.getAuthorities()))
-                    .claim("roles", roles)
-                    .issuedAt(new Date())
-                    .expiration(new Date((new Date()).getTime() + jwtExpiration))
-                    .signWith(key).compact();
+        if (authentication == null) return null;
 
-        }
-        return token;
+        ConnectedUser domainUser = (ConnectedUser) authentication.getPrincipal();
+        List<String> roles = domainUser.getRoles();
+
+        // 1) Construis l'expiration en LocalDateTime
+        LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
+        LocalDateTime expiresAt = now.plus(jwtExpiration, ChronoUnit.MILLIS);
+
+        // 2) Crée la session JTI avec un LocalDateTime au lieu d'Instant
+        UUID jti = jtiService.createSession(
+                domainUser.getEmployeeNumber(),
+                domainUser.getPlatformTypeEnum().name(),
+                expiresAt
+        );
+
+        // 3) Génère le token en utilisant les mêmes dates (converties en Date pour le JWT)
+        Date issuedAtDate = Date.from(now.atZone(ZoneOffset.UTC).toInstant());
+        Date expirationDate = Date.from(expiresAt.atZone(ZoneOffset.UTC).toInstant());
+
+        SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+        return Jwts.builder()
+                .issuer("BACOS-TECH")
+                .subject(authentication.getName())
+                .claim("tenantCode", domainUser.getTenantCode())
+                .claim("permissions", populateAuthorities(authentication.getAuthorities()))
+                .claim("roles", roles)
+                .claim("jti", jti.toString())
+                .issuedAt(issuedAtDate)
+                .expiration(expirationDate)
+                .signWith(key)
+                .compact();
     }
+
 
     private static Set<String> populateAuthorities(Collection<? extends GrantedAuthority> collection) {
         Set<String> authoritiesSet = new HashSet<>();
@@ -113,5 +135,11 @@ public class JwtService {
     public List<String> getPermissions(String token) {
         Claims claims = extractAllClaims(token);
         return claims.get("permissions", List.class);
+    }
+
+    public UUID getJti(String token) {
+        Claims claims = extractAllClaims(token);
+        String jti = claims.get("jti", String.class);
+        return UUID.fromString(jti);
     }
 }

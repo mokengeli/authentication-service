@@ -21,6 +21,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -69,9 +70,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 String tenantCode = this.jwtService.getTenantCode(token);
                 List<String> roles = this.jwtService.getRoles(token);
                 List<String> permissions = this.jwtService.getPermissions(token);
+                UUID jti = this.jwtService.getJti(token);
                 List<GrantedAuthority> grantedAuthorities = getAuthoritiesFromJWT(permissions);
-
-                ConnectedUser connectedUser = createUser(username, tenantCode, roles, permissions);
+                ConnectedUser connectedUser = createUser(username, tenantCode, roles, permissions, jti);
                 UsernamePasswordAuthenticationToken authenticationToken =
                         new UsernamePasswordAuthenticationToken(connectedUser, null, grantedAuthorities);
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -83,13 +84,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private ConnectedUser createUser(String username, String tenantCode, List<String> roles, List<String> permissions) {
-
+    private ConnectedUser createUser(String username, String tenantCode, List<String> roles,
+                                     List<String> permissions, UUID jti) {
         return ConnectedUser.builder()
                 .employeeNumber(username)
                 .tenantCode(tenantCode)
                 .roles(roles)
                 .permissions(permissions)
+                .jti(jti)
                 .build();
     }
 
