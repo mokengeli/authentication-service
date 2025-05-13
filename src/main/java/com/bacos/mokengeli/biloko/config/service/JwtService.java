@@ -83,11 +83,11 @@ public class JwtService {
         // 1) Construis l'expiration en LocalDateTime
         LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
         LocalDateTime expiresAt = now.plus(jwtExpiration, ChronoUnit.MILLIS);
-
+        String platform = domainUser.getPlatformTypeEnum().name();
         // 2) Crée la session JTI avec un LocalDateTime au lieu d'Instant
         UUID jti = jtiService.createSession(
                 domainUser.getEmployeeNumber(),
-                domainUser.getPlatformTypeEnum().name(),
+                platform,
                 expiresAt
         );
 
@@ -99,10 +99,12 @@ public class JwtService {
         return Jwts.builder()
                 .issuer("BACOS-TECH")
                 .subject(authentication.getName())
+                .claim("employeeNumber", domainUser.getEmployeeNumber())
                 .claim("tenantCode", domainUser.getTenantCode())
                 .claim("permissions", populateAuthorities(authentication.getAuthorities()))
                 .claim("roles", roles)
                 .claim("jti", jti.toString())
+                .claim("appType", platform)
                 .issuedAt(issuedAtDate)
                 .expiration(expirationDate)
                 .signWith(key)

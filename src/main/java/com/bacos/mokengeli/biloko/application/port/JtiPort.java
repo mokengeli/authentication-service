@@ -1,14 +1,15 @@
 package com.bacos.mokengeli.biloko.application.port;
 
-import java.time.Instant;
+import com.bacos.mokengeli.biloko.infrastructure.model.JwtSession;
+
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.List;
 import java.util.UUID;
 
 public interface JtiPort {
     UUID createSession(String employeeNumber, String appType, LocalDateTime expiresAt);
 
-    Optional<UUID> getActiveJti(String employeeNumber, String appType);
+    List<JwtSession> getActiveJti(String employeeNumber, String appType);
 
     void invalidateSession(UUID jti);
 }

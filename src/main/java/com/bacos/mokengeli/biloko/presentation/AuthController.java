@@ -8,6 +8,7 @@ import com.bacos.mokengeli.biloko.application.service.JtiService;
 import com.bacos.mokengeli.biloko.application.service.UserAppService;
 import com.bacos.mokengeli.biloko.config.service.CookieService;
 import com.bacos.mokengeli.biloko.application.exception.ServiceException;
+import com.bacos.mokengeli.biloko.infrastructure.model.UserSessionListDomain;
 import com.bacos.mokengeli.biloko.presentation.exception.ResponseStatusWrapperException;
 import com.bacos.mokengeli.biloko.presentation.model.AuthResponseDto;
 import com.bacos.mokengeli.biloko.presentation.model.ChangePasswordRequest;
@@ -26,9 +27,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -163,14 +162,12 @@ public class AuthController {
     }
 
     @GetMapping("/internal/jti")
-    public ResponseEntity<String> introspectJti(
+    public UserSessionListDomain introspectJti(
             @RequestParam String employeeNumber,
             @RequestParam String appType
     ) {
-        return jtiService.getActiveJti(employeeNumber, appType)
-                .map(UUID::toString)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return jtiService.getActiveJti(employeeNumber, appType);
+
     }
 
 }

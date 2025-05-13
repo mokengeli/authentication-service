@@ -1,8 +1,12 @@
 package com.bacos.mokengeli.biloko.application.service;
 
 import com.bacos.mokengeli.biloko.application.port.JtiPort;
+import com.bacos.mokengeli.biloko.infrastructure.model.JwtSession;
+import com.bacos.mokengeli.biloko.infrastructure.model.UserSessionDomain;
+import com.bacos.mokengeli.biloko.infrastructure.model.UserSessionListDomain;
 import jakarta.persistence.OptimisticLockException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
@@ -11,24 +15,44 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.Comparator;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class JtiService {
     private final JtiPort jtiPort;
+    private final SessionLimitService sessionLimitService;
 
-    public JtiService(JtiPort jtiPort) {
+    @Autowired
+    public JtiService(JtiPort jtiPort, SessionLimitService sessionLimitService) {
         this.jtiPort = jtiPort;
+        this.sessionLimitService = sessionLimitService;
     }
 
     public UUID createSession(String employeeNumber, String appType, LocalDateTime expiresAt) {
         return jtiPort.createSession(employeeNumber, appType, expiresAt);
     }
 
-    public Optional<UUID> getActiveJti(String employeeNumber, String appType) {
-        return jtiPort.getActiveJti(employeeNumber, appType);
+    public UserSessionListDomain getActiveJti(String employeeNumber, String appType) {
+
+        List<JwtSession> sessions = jtiPort.getActiveJti(employeeNumber, appType)
+                .stream()
+                .filter(s -> s.getExpiresAt().isAfter(LocalDateTime.now()))
+                .sorted(Comparator.comparing(JwtSession::getIssuedAt)
+                        .reversed())       // plus récentes d’abord
+                .toList();
+        int max = sessionLimitService.resolve(appType);
+
+        // Tronque si nécessaire
+        List<UserSessionDomain> allowed = sessions.stream()
+                .limit(max)
+                .map(s -> new UserSessionDomain(s.getJti().toString(), s.getIssuedAt(), s.getExpiresAt()))
+                .toList();
+
+        return new UserSessionListDomain(employeeNumber, appType, max, allowed);
     }
 
     @Async

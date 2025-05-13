@@ -4,7 +4,7 @@ spring:
   application:
     name: auth-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/mokengeli_db
+    url: jdbc:postgresql://localhost:5432/mokengeli_biloko_db
     username: user1
     password: password
     driver-class-name: org.postgresql.Driver
@@ -34,6 +34,5 @@ eureka:
     prefer-ip-address: true  # Utilise l'adresse IP pour l'enregistrement (utile pour les environnements containerisés)
 
 
-springdoc:
-  api-docs:
-    group: authentication
+user:
+  service-id: user-service
