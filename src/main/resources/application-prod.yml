@@ -36,6 +36,10 @@ eureka:
   instance:
     prefer-ip-address: true
     instance-id: ${spring.application.name}:${random.uuid}
-
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
 user:
   service-id: ${USER_SERVICE_ID:user-service}
