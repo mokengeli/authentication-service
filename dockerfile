@@ -45,11 +45,13 @@ ENV SERVER_PORT="" \
 
 # Variables d'environnement OPTIONNELLES (avec valeurs par défaut)
 ENV TIME_ZONE="GMT+01:00" \
+    SPRING_PROFILES_ACTIVE="dev" \
     POSTGRES_SCHEMA="user_schema" \
     USER_SERVICE_ID="user-service"
 
 # Point d'entrée sans spécifier le profil (sera fourni au runtime)
-ENTRYPOINT ["java", "-jar", "app.jar", "--spring.config.location=file:./config/"]
+ENTRYPOINT ["java", "-jar", "app.jar", "--spring.profiles.active=${SPRING_PROFILES_ACTIVE}",\
+            "--spring.config.location=file:./config/"]
 
 # Healthcheck - vérifie si l'application répond
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
