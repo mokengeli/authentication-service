@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: auth-service
+    name: authentication-service
   datasource:
     url: ${POSTGRES_URL}
     username: ${POSTGRES_USER}
