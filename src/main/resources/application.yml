@@ -5,8 +5,8 @@ spring:
     name: authentication-service
   datasource:
     url: jdbc:postgresql://localhost:5432/mokengeli_biloko_db
-    username:
-    password:
+    username: xxx
+    password: xxx
     driver-class-name: org.postgresql.Driver
     hikari:
       schema: user_schema
