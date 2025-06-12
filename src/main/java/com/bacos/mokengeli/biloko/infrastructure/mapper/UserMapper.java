@@ -52,6 +52,7 @@ public class UserMapper {
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .postName(user.getPostName())  // Si postName est présent dans User
+                .userName(user.getUserName())
                 .email(user.getEmail())
                 .password(user.getPassword())
                 .createdAt(user.getCreatedAt())
@@ -69,6 +70,7 @@ public class UserMapper {
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .postName(user.getPostName())
+                .userName(user.getUserName())
                 .roles(user.getRoles().stream()
                         .map(r -> r.getLabel())
                         .collect(Collectors.toList()))
@@ -81,6 +83,7 @@ public class UserMapper {
                 .id(domainUser.getId())
                 .firstName(domainUser.getFirstName())
                 .lastName(domainUser.getLastName())
+                .userName(domainUser.getUserName())
                 .employeeNumber(domainUser.getEmployeeNumber())
                 .email(domainUser.getEmail())
                 // tenant, roles et permissions sont gérés par UserPort/Service

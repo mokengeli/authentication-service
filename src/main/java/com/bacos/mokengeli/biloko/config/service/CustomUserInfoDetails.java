@@ -20,7 +20,7 @@ public class CustomUserInfoDetails extends ConnectedUser implements UserDetails 
     public CustomUserInfoDetails(DomainUser user) {
 
         setTenantCode(user.getTenantCode());
-        this.username = user.getEmployeeNumber();
+        this.username = user.getUserName();
         this.password = user.getPassword();
         setRoles(user.getRoles());
         setEmployeeNumber(user.getEmployeeNumber());

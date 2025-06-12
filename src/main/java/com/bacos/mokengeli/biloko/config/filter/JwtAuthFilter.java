@@ -2,6 +2,7 @@ package com.bacos.mokengeli.biloko.config.filter;
 
 
 import com.bacos.mokengeli.biloko.application.domain.model.ConnectedUser;
+import com.bacos.mokengeli.biloko.config.service.CustomUserInfoDetails;
 import com.bacos.mokengeli.biloko.config.service.JwtService;
 import com.bacos.mokengeli.biloko.config.service.UserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
@@ -14,7 +15,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -64,14 +64,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(username);
+            CustomUserInfoDetails userDetails = userDetailsServiceImpl.loadUserByUsername(username);
             if (jwtService.validateToken(token, userDetails)) {
                 String tenantCode = this.jwtService.getTenantCode(token);
                 List<String> roles = this.jwtService.getRoles(token);
                 List<String> permissions = this.jwtService.getPermissions(token);
                 UUID jti = this.jwtService.getJti(token);
                 List<GrantedAuthority> grantedAuthorities = getAuthoritiesFromJWT(permissions);
-                ConnectedUser connectedUser = createUser(username, tenantCode, roles, permissions, jti);
+                ConnectedUser connectedUser = createUser(username, userDetails.getEmployeeNumber(),
+                        tenantCode, roles, permissions, jti);
                 UsernamePasswordAuthenticationToken authenticationToken =
                         new UsernamePasswordAuthenticationToken(connectedUser, null, grantedAuthorities);
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -83,10 +84,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private ConnectedUser createUser(String username, String tenantCode, List<String> roles,
+    private ConnectedUser createUser(String username, String employeeNumber, String tenantCode, List<String> roles,
                                      List<String> permissions, UUID jti) {
         return ConnectedUser.builder()
-                .employeeNumber(username)
+                .username(username)
+                .employeeNumber(employeeNumber)
                 .tenantCode(tenantCode)
                 .roles(roles)
                 .permissions(permissions)

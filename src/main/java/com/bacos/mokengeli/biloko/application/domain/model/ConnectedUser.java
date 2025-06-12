@@ -15,6 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ConnectedUser {
     private UUID jti; // session unique de connexion
+    private String username;
     private String tenantCode;
     private String employeeNumber;
     private PlatformTypeEnum platformTypeEnum;

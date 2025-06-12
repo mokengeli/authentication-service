@@ -9,12 +9,17 @@ spring:
     password: password
     driver-class-name: org.postgresql.Driver
     hikari:
-      schema: user_schema
+      maximum-pool-size: 2
+      minimum-idle: 1
+      idle-timeout: 180000       # 3 minutes
+      connection-timeout: 30000
   jpa: # Hibernate crée/mettre à jour les tables automatiquement
     properties:
       hibernate:
+        default_schema: user_schema
         jdbc:
           time_zone: GMT+01:00
+
   jackson:
     time-zone: GMT+01:00
 security:
@@ -40,3 +45,6 @@ management:
 
 user:
   service-id: user-service
+logging:
+  level:
+    com.zaxxer.hikari: DEBUG

@@ -20,16 +20,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private AuthenticationService authenticationService;
 
 
-
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public CustomUserInfoDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.debug("Entering in loadUserByUsername Method...");
-        Optional<DomainUser> optUser = authenticationService.findUserByEmployeeNumber(username);
+        Optional<DomainUser> optUser = authenticationService.findByUserNameOrEmployeeNumber(username);
         if (optUser.isEmpty()) {
             log.error("Username not found: " + username);
             throw new UsernameNotFoundException("could not found user..!!");
         }
-        log.info("loadUserByUsername username {}..!!!",username);
+        log.info("loadUserByUsername username {}..!!!", username);
         return new CustomUserInfoDetails(optUser.get());
 
     }

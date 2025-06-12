@@ -33,8 +33,20 @@ public class AuthenticationService {
         this.userAppService = userAppService;
     }
 
-    public Optional<DomainUser> findUserByEmployeeNumber(String username) {
-        return this.userPort.findByEmployeeNumber(username);
+    public Optional<DomainUser> findUserByEmployeeNumber(String employeeNumber) {
+        return this.userPort.findByEmployeeNumber(employeeNumber);
+    }
+
+    public Optional<DomainUser> findByUserName(String username) {
+        return this.userPort.findByUserName(username);
+    }
+
+    public Optional<DomainUser> findByUserNameOrEmployeeNumber(String userNameOrEmployeeNumber) {
+        Optional<DomainUser> byUserName = this.findByUserName(userNameOrEmployeeNumber);
+        if (byUserName.isPresent()) {
+            return byUserName;
+        }
+        return this.findUserByEmployeeNumber(userNameOrEmployeeNumber);
     }
 
     public DomainUser registerNewUser(UserRequest userRequest) throws ServiceException {
@@ -42,6 +54,7 @@ public class AuthenticationService {
             DomainUser domainUser = DomainUser.builder().tenantCode(userRequest.getTenantCode())
                     .email(userRequest.getEmail()).firstName(userRequest.getFirstName()).lastName(userRequest.getLastName())
                     .postName(userRequest.getPostName())
+                    .userName(userRequest.getUserName())
                     .roles(List.of(userRequest.getRole())).build();
 
             // Crypter le mot de passe

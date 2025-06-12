@@ -57,4 +57,15 @@ public class UserAdapter implements UserPort {
         user.setUpdatedAt(LocalDateTime.now());
         userRepository.save(user);
     }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Optional<DomainUser> findByUserName(String username) {
+        Optional<User> optUser = this.userRepository.findByUserName(username);
+        if (optUser.isEmpty()) {
+            return Optional.empty();
+        }
+        User user = optUser.get();
+        return Optional.of(UserMapper.toDomainWithPwd(user));
+    }
 }

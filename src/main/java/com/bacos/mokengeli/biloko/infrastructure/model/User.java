@@ -29,6 +29,9 @@ public class User {
     private String postName;
 
     @Column(unique = true)
+    private String userName;
+
+    @Column(unique = true)
     private String email;
 
     @Column(name = "employee_number", nullable = false, unique = true)

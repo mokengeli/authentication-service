@@ -25,6 +25,7 @@ public class DomainUser {
     private String firstName;
     private String lastName;
     private String postName;
+    private String userName;
     private String employeeNumber;
     private String email;
     private String password;
