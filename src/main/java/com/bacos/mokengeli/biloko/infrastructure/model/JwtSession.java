@@ -9,7 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Entity
@@ -26,7 +26,7 @@ public class JwtSession {
     @Column(nullable = false)
     private String appType;
     @Column(nullable = false)
-    private LocalDateTime issuedAt;
+    private OffsetDateTime issuedAt;
     @Column(nullable = false)
-    private LocalDateTime expiresAt;
+    private OffsetDateTime expiresAt;
 }

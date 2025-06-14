@@ -3,6 +3,7 @@ package com.bacos.mokengeli.biloko.config.service;
 
 import com.bacos.mokengeli.biloko.application.domain.model.ConnectedUser;
 import com.bacos.mokengeli.biloko.application.service.JtiService;
+import com.bacos.mokengeli.biloko.application.utils.DateUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -17,6 +18,7 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -83,12 +85,13 @@ public class JwtService {
         // 1) Construis l'expiration en LocalDateTime
         LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
         LocalDateTime expiresAt = now.plus(jwtExpiration, ChronoUnit.MILLIS);
+
         String platform = domainUser.getPlatformTypeEnum().name();
         // 2) Crée la session JTI avec un LocalDateTime au lieu d'Instant
         UUID jti = jtiService.createSession(
                 domainUser.getEmployeeNumber(),
                 platform,
-                expiresAt
+                DateUtils.toOffsetDateTime(expiresAt)
         );
 
         // 3) Génère le token en utilisant les mêmes dates (converties en Date pour le JWT)

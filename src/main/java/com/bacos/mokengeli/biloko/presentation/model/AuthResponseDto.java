@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Builder
@@ -24,5 +24,5 @@ public class AuthResponseDto {
     private String tenantName;
     private String subscriptionCode;
     private String establishmentCode;
-    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
 }
