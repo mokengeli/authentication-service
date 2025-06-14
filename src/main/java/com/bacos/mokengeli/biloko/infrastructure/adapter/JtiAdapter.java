@@ -8,7 +8,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -28,7 +28,7 @@ public class JtiAdapter implements JtiPort {
     @Transactional
     public UUID createSession(String employeeNumber,
                               String appType,
-                              LocalDateTime expiresAt) {
+                              OffsetDateTime expiresAt) {
 
         /* 1. Récupère toutes les sessions de l’utilisateur / plate-forme */
         List<JwtSession> sessions = repo
@@ -36,7 +36,7 @@ public class JtiAdapter implements JtiPort {
                 .orElse(List.of());
 
         /* 2. Supprime celles déjà expirées */
-        LocalDateTime now = LocalDateTime.now();
+        OffsetDateTime now = OffsetDateTime.now();
         sessions.stream()
                 .filter(s -> s.getExpiresAt().isBefore(now))
                 .forEach(repo::delete);
@@ -76,7 +76,7 @@ public class JtiAdapter implements JtiPort {
         return repo.findByEmployeeNumberAndAppType(employeeNumber, appType) // Optional<List<JwtSession>>
                 .orElse(List.of())                                        // si absent → liste vide
                 .stream()
-                .filter(session -> session.getExpiresAt().isAfter(LocalDateTime.now()))
+                .filter(session -> session.getExpiresAt().isAfter(OffsetDateTime.now()))
                 .toList();                                                // Java 17+ ; sinon collect(Collectors.toList())
     }
 

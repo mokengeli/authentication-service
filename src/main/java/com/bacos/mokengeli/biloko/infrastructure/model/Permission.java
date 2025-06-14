@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Set;
 
 
@@ -24,7 +24,7 @@ public class Permission {
     private String description;  // Description de la permission
 
     @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
 
     // Relation Many-to-Many avec Roles
     @ManyToMany(mappedBy = "permissions")  // Référence à la relation définie dans Role

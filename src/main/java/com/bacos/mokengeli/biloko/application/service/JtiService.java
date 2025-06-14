@@ -14,11 +14,10 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -32,7 +31,7 @@ public class JtiService {
         this.sessionLimitService = sessionLimitService;
     }
 
-    public UUID createSession(String employeeNumber, String appType, LocalDateTime expiresAt) {
+    public UUID createSession(String employeeNumber, String appType, OffsetDateTime expiresAt) {
         return jtiPort.createSession(employeeNumber, appType, expiresAt);
     }
 
@@ -40,7 +39,7 @@ public class JtiService {
 
         List<JwtSession> sessions = jtiPort.getActiveJti(employeeNumber, appType)
                 .stream()
-                .filter(s -> s.getExpiresAt().isAfter(LocalDateTime.now()))
+                .filter(s -> s.getExpiresAt().isAfter(OffsetDateTime.now()))
                 .sorted(Comparator.comparing(JwtSession::getIssuedAt)
                         .reversed())       // plus récentes d’abord
                 .toList();

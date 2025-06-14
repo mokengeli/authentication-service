@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -54,7 +54,7 @@ public class UserAdapter implements UserPort {
                 .orElseThrow(() -> new ServiceException(
                         UUID.randomUUID().toString(), "Utilisateur inexistant"));
         user.setPassword(encodedPwd);
-        user.setUpdatedAt(LocalDateTime.now());
+        user.setUpdatedAt(OffsetDateTime.now());
         userRepository.save(user);
     }
 

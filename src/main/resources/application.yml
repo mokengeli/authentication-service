@@ -47,4 +47,6 @@ user:
   service-id: user-service
 logging:
   level:
-    com.zaxxer.hikari: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+    com.fasterxml.jackson: DEBUG
