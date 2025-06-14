@@ -13,14 +13,13 @@ import java.util.List;
 
 public class CustomUserInfoDetails extends ConnectedUser implements UserDetails {
 
-    private String username;
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
 
     public CustomUserInfoDetails(DomainUser user) {
 
         setTenantCode(user.getTenantCode());
-        this.username = user.getUserName();
+        setUsername(user.getUserName());
         this.password = user.getPassword();
         setRoles(user.getRoles());
         setEmployeeNumber(user.getEmployeeNumber());
@@ -40,11 +39,6 @@ public class CustomUserInfoDetails extends ConnectedUser implements UserDetails 
     @Override
     public String getPassword() {
         return password;
-    }
-
-    @Override
-    public String getUsername() {
-        return username;
     }
 
     @Override
