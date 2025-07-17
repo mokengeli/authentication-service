@@ -25,4 +25,5 @@ public class AuthResponseDto {
     private String subscriptionCode;
     private String establishmentCode;
     private OffsetDateTime createdAt;
+    private String token;
 }

@@ -22,7 +22,7 @@ public class CookieService {
         this.jwtService = jwtService;
     }
 
-    public void addNewAccessTokenToResponse(HttpServletResponse response, Authentication authentication) {
+    public String addNewAccessTokenToResponse(HttpServletResponse response, Authentication authentication) {
         String accessToken = this.jwtService.generateJwtToken(authentication);
         Cookie cookie = new Cookie("accessToken", accessToken);
         Integer jwtExpiration = this.jwtService.getJwtExpiration();
@@ -31,6 +31,7 @@ public class CookieService {
         cookie.setSecure(isSsl);
         cookie.setPath("/");
         response.addCookie(cookie);
+        return accessToken;
     }
 
     public void clearAccessTokenFromResponse(HttpServletRequest request, HttpServletResponse response) {

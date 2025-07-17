@@ -76,7 +76,7 @@ public class AuthController {
             }
             principal.setPlatformTypeEnum(PlatformTypeEnum.valueOf(platformType));
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            this.cookieService.addNewAccessTokenToResponse(response, authentication);
+            String token = this.cookieService.addNewAccessTokenToResponse(response, authentication);
 
             Optional<DomainUser> OptUser = authenticationService.findUserByEmployeeNumber(principal.getEmployeeNumber());
             DomainUser user = OptUser.get();
@@ -93,6 +93,7 @@ public class AuthController {
                     .createdAt(user.getCreatedAt())
                     .subscriptionCode(user.getTenantSubscriptionPlan().getCode())
                     .establishmentCode(user.getTenantEstablishmentType().getCode())
+                    .token(token)
                     .roles(user.getRoles()).build());
         } catch (Exception e) {
             throw new ResponseStatusWrapperException(HttpStatus.BAD_REQUEST, "Login failed: " + e.getMessage());
