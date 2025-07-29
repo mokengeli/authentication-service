@@ -16,7 +16,7 @@ import java.util.TimeZone;
 @EnableRetry
 public class Application {
     public static void main(String[] args) {
-        TimeZone.setDefault(TimeZone.getTimeZone("GMT+01:00"));
+        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Paris"));
         SpringApplication.run(Application.class, args);
     }
 }
