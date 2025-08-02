@@ -17,6 +17,7 @@ import com.bacos.mokengeli.biloko.presentation.model.UserRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -94,6 +95,7 @@ public class AuthController {
                     .subscriptionCode(user.getTenantSubscriptionPlan().getCode())
                     .establishmentCode(user.getTenantEstablishmentType().getCode())
                     .token(token)
+                    .hasValidationPin(StringUtils.isNotEmpty(user.getValidationPin()))
                     .roles(user.getRoles()).build());
         } catch (Exception e) {
             throw new ResponseStatusWrapperException(HttpStatus.BAD_REQUEST, "Login failed: " + e.getMessage());
@@ -137,6 +139,7 @@ public class AuthController {
                 .subscriptionCode(user.getTenantSubscriptionPlan().getCode())
                 .establishmentCode(user.getTenantEstablishmentType().getCode())
                 .roles(user.getRoles())
+                .hasValidationPin(StringUtils.isNotEmpty(user.getValidationPin()))
                 .build();
 
         return ResponseEntity.ok(responseDto);

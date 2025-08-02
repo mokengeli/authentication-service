@@ -55,6 +55,7 @@ public class UserMapper {
                 .userName(user.getUserName())
                 .email(user.getEmail())
                 .password(user.getPassword())
+                .validationPin(user.getValidationPin())
                 .createdAt(user.getCreatedAt())
                 .updatedAt(user.getUpdatedAt())
                 .roles(roles)
