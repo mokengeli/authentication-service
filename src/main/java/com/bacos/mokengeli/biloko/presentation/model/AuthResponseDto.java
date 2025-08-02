@@ -26,4 +26,5 @@ public class AuthResponseDto {
     private String establishmentCode;
     private OffsetDateTime createdAt;
     private String token;
+    private boolean hasValidationPin;
 }
