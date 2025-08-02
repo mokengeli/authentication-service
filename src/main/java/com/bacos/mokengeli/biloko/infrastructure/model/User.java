@@ -55,6 +55,9 @@ public class User {
     @JoinColumn(name = "tenant_id", nullable = false)
     private Tenant tenant;
 
+    @Column(name = "validation_pin")
+    private String validationPin;
+
     // Relation Many-to-Many avec les Rôles via UserRole
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.EAGER)
     @JoinTable(
