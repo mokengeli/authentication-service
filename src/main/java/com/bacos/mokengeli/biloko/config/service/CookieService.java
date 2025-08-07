@@ -30,6 +30,7 @@ public class CookieService {
         cookie.setHttpOnly(true);
         cookie.setSecure(isSsl);
         cookie.setPath("/");
+        cookie.setDomain(".preprod.pos.mokengeli-biloko.com");
         response.addCookie(cookie);
         return accessToken;
     }
