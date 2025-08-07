@@ -15,11 +15,13 @@ public class CookieService {
 
     private final boolean isSsl;
     private final JwtService jwtService;
+    private final String cookieDomain;
 
     @Autowired
-    public CookieService(@Value("${security.is-ssl}") boolean isSsl, JwtService jwtService) {
+    public CookieService(@Value("${security.is-ssl}") boolean isSsl, @Value("${security.cookie-domain}") String cookieDomain, JwtService jwtService) {
         this.isSsl = isSsl;
         this.jwtService = jwtService;
+        this.cookieDomain = cookieDomain;
     }
 
     public String addNewAccessTokenToResponse(HttpServletResponse response, Authentication authentication) {
@@ -30,7 +32,7 @@ public class CookieService {
         cookie.setHttpOnly(true);
         cookie.setSecure(isSsl);
         cookie.setPath("/");
-        cookie.setDomain(".preprod.pos.mokengeli-biloko.com");
+        cookie.setDomain(cookieDomain);
         response.addCookie(cookie);
         return accessToken;
     }
