@@ -50,6 +50,7 @@ public class CookieService {
         cookie.setSecure(isSsl); // Set this only if you're using HTTPS
         cookie.setPath("/");
         cookie.setMaxAge(0);
+        cookie.setDomain(cookieDomain);
         response.addCookie(cookie);
     }
 
